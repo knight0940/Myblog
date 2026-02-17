@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品 - Amorend</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-color: #F5F5DC;
+            --text-color: #1a1a2e;
+            --accent-color: #0047AB;
+            --secondary-accent: #1E90FF;
+            --white-accent: #FFFFFF;
+            --nav-bg: rgba(245, 245, 220, 0.85);
+            --nav-border: rgba(26, 26, 46, 0.1);
+            --font-sans: 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0e27;
+            --text-color: #F0F0F0;
+            --accent-color: #1E90FF;
+            --secondary-accent: #87CEEB;
+            --white-accent: #FFFFFF;
+            --nav-bg: rgba(10, 14, 39, 0.85);
+            --nav-border: rgba(240, 240, 240, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Canvas Background */
+        #line-art-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- Header --- */
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2.5rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(10, 14, 39, 0.85);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            margin-left: 2rem;
+            position: relative;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        #theme-toggle {
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        #theme-toggle:hover {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            color: var(--white-accent);
+        }
+
+        /* --- Section Divider --- */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--accent-color) 50%,
+                transparent 100%
+            );
+            opacity: 0.3;
+            margin: 4rem 0;
+        }
+
+        /* --- Main Content --- */
+        .page-header {
+            padding: 8rem 2rem 4rem 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title {
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg,
+                #001a33 0%,
+                #0047AB 50%,
+                #87CEEB 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        [data-theme="dark"] .page-title {
+            background: linear-gradient(135deg,
+                #F0F0F0 0%,
+                #1E90FF 50%,
+                #87CEEB 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        /* --- Work Grid --- */
+        .work-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .work-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            will-change: transform, opacity;
+        }
+
+        .work-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 71, 171, 0.25);
+            border-color: var(--accent-color);
+        }
+
+        .work-code {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .work-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .work-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .work-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .work-tag {
+            background: rgba(0, 71, 171, 0.1);
+            color: var(--accent-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 900px;
+            width: 100%;
+            height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            transform: scale(0.95) translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 -1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 2px 4px rgba(255, 255, 255, 0.6),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.05),
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 30px 100px rgba(0, 0, 0, 0.2);
+            /* 隐藏滚动条但保持滚动功能 */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            /* 确保可以接收触摸事件 */
+            touch-action: pan-y;
+            overscroll-behavior: contain;
+        }
+
+        .modal-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        [data-theme="dark"] .modal-content {
+            background: rgba(10, 14, 39, 0.85);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 10;
+        }
+
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f57;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            position: relative;
+        }
+
+        .traffic-light::after {
+            content: '×';
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .modal-close:hover .traffic-light::after {
+            opacity: 1;
+        }
+
+        .modal-close:hover .traffic-light {
+            box-shadow: 0 0 8px rgba(255, 95, 87, 0.6);
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .modal-code {
+            font-family: var(--font-mono);
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .modal-body {
+            line-height: 1.8;
+        }
+
+        .modal-body h3 {
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .modal-body p {
+            margin-bottom: 1rem;
+        }
+
+        .modal-body ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-body code {
+            background: rgba(0, 71, 171, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+        }
+
+        /* --- Music Toggle --- */
+        .music-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 8px 32px rgba(0, 71, 171, 0.2),
+                0 4px 16px rgba(0, 71, 171, 0.1);
+            z-index: 1000;
+        }
+
+        .music-toggle:hover {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            transform: scale(1.1) translateY(-4px);
+        }
+
+        .music-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+        }
+
+        .music-toggle.playing {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow:
+                    0 8px 32px rgba(0, 71, 171, 0.2),
+                    0 4px 16px rgba(0, 71, 171, 0.1);
+            }
+            50% {
+                box-shadow:
+                    0 12px 48px rgba(0, 71, 171, 0.35),
+                    0 6px 24px rgba(0, 71, 171, 0.2);
+            }
+        }
+
+        /* --- Mobile --- */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+                margin: 0 1rem;
+                padding: 1.2rem 1.5rem;
+            }
+            .nav-links a { margin-left: 0; margin-right: 1.5rem; }
+            .work-grid {
+                grid-template-columns: 1fr;
+            }
+            .music-toggle {
+                width: 48px;
+                height: 48px;
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+            .music-toggle svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="line-art-canvas"></canvas>
+
+    <header>
+        <div class="logo">Amorend</div>
+        <nav class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="work.html">作品</a>
+            <a href="blog.html">博客</a>
+            <a href="index.html#contact">联系</a>
+            <a id="theme-toggle">Change Contrast</a>
+        </nav>
+    </header>
+
+    <!-- 音乐控制浮动按钮 -->
+    <button id="music-toggle" class="music-toggle" title="播放/暂停音乐">
+        <svg class="music-icon" viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+    </button>
+
+    <!-- 隐藏的音频播放器 -->
+    <audio id="bg-music" loop>
+        <source src="Music/在雨后醒来.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="page-header">
+        <h1 class="page-title">ALL WORKS</h1>
+        <p class="page-subtitle">探索我的项目世界</p>
+    </div>
+
+    <div class="work-grid">
+        <article class="work-card" data-work="ai-agent-platform">
+            <div class="work-code">#2024-001</div>
+            <h2 class="work-name">AI Agent 研究平台</h2>
+            <p class="work-description">基于大语言模型的智能Agent系统，支持多模态交互和自主决策。</p>
+            <div class="work-tags">
+                <span class="work-tag">#AI-Agent</span>
+                <span class="work-tag">#Python</span>
+            </div>
+        </article>
+
+        <article class="work-card" data-work="medical-imaging-system">
+            <div class="work-code">#2023-008</div>
+            <h2 class="work-name">医学影像分析系统</h2>
+            <p class="work-description">深度学习驱动的病理图像分析平台，实现自动化诊断辅助。</p>
+            <div class="work-tags">
+                <span class="work-tag">#Computer-Vision</span>
+                <span class="work-tag">#Medical-AI</span>
+            </div>
+        </article>
+
+        <article class="work-card" data-work="portfolio">
+            <div class="work-code">#PORT-FOLIO</div>
+            <h2 class="work-name">个人作品集网站</h2>
+            <p class="work-description">使用现代前端技术构建的个人网站，展示项目和研究成果。</p>
+            <div class="work-tags">
+                <span class="work-tag">#Web-Dev</span>
+                <span class="work-tag">#GSAP</span>
+            </div>
+        </article>
+
+        <article class="work-card" data-work="saas-platform">
+            <div class="work-code">#DEV-TOOL</div>
+            <h2 class="work-name">SaaS 平台开发</h2>
+            <p class="work-description">全栈开发的SaaS工具，提供高效的团队协作和项目管理功能。</p>
+            <div class="work-tags">
+                <span class="work-tag">#Full-Stack</span>
+                <span class="work-tag">#React</span>
+            </div>
+        </article>
+
+        <article class="work-card" data-work="knowledge-graph">
+            <div class="work-code">#2023-005</div>
+            <h2 class="work-name">知识图谱可视化</h2>
+            <p class="work-description">交互式知识图谱可视化工具，支持大规模数据展示和探索。</p>
+            <div class="work-tags">
+                <span class="work-tag">#D3.js</span>
+                <span class="work-tag">#Data-Viz</span>
+            </div>
+        </article>
+
+        <article class="work-card" data-work="llm-framework">
+            <div class="work-code">#2023-003</div>
+            <h2 class="work-name">LLM 微调框架</h2>
+            <p class="work-description">开源的大语言模型微调框架，简化模型适配流程。</p>
+            <div class="work-tags">
+                <span class="work-tag">#LLM</span>
+                <span class="work-tag">#PyTorch</span>
+            </div>
+        </article>
+
+        <article class="work-card" data-work="video-processing">
+            <div class="work-code">#2022-012</div>
+            <h2 class="work-name">实时视频处理系统</h2>
+            <p class="work-description">基于GPU加速的实时视频处理和分析平台。</p>
+            <div class="work-tags">
+                <span class="work-tag">#CUDA</span>
+                <span class="work-tag">#CPP</span>
+            </div>
+        </article>
+
+        <article class="work-card" data-work="recommendation-engine">
+            <div class="work-code">#2022-008</div>
+            <h2 class="work-name">智能推荐引擎</h2>
+            <p class="work-description">基于协同过滤和深度学习的个性化推荐系统。</p>
+            <div class="work-tags">
+                <span class="work-tag">#ML</span>
+                <span class="work-tag">#Recommendation</span>
+            </div>
+        </article>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" data-lenis-prevent>
+        <div class="modal-content" data-lenis-prevent>
+            <div class="modal-close" id="modal-close">
+                <div class="traffic-light"></div>
+            </div>
+            <h2 class="modal-title" id="modal-title"></h2>
+            <span class="modal-code" id="modal-code"></span>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- 底部空间，确保滚动流畅 -->
+    <div style="height: 100px;"></div>
+
+    <script>
+        // 注册 ScrollTrigger 插件
+        gsap.registerPlugin(ScrollTrigger);
+
+        // === 作品数据 ===
+        const workProjects = {
+            'ai-agent-platform': {
+                title: 'AI Agent 研究平台',
+                code: '#2024-001',
+                content: `
+                    <h3>项目概述</h3>
+                    <p>基于大语言模型构建的智能Agent研究平台，实现了多模态交互、自主决策和任务规划能力。该平台支持插件化架构，可以灵活扩展各种功能模块。</p>
+                    <h3>核心技术</h3>
+                    <ul>
+                        <li>大语言模型集成（GPT-4, Claude等）</li>
+                        <li>向量数据库（RAG检索增强生成）</li>
+                        <li>工具调用框架（Function Calling）</li>
+                        <li>多模态输入处理（文本、图像、音频）</li>
+                    </ul>
+                    <h3>主要功能</h3>
+                    <ul>
+                        <li>自主任务分解与执行</li>
+                        <li>长短期记忆管理</li>
+                        <li>多Agent协作机制</li>
+                        <li>实时学习与适应</li>
+                    </ul>
+                    <h3>技术栈</h3>
+                    <p><code>Python</code> <code>LangChain</code> <code>FastAPI</code> <code>PostgreSQL</code> <code>Redis</code></p>
+                `
+            },
+            'medical-imaging-system': {
+                title: '医学影像分析系统',
+                code: '#2023-008',
+                content: `
+                    <h3>项目概述</h3>
+                    <p>深度学习驱动的医学影像分析平台，专注于病理图像的自动识别和诊断辅助。系统采用CNN架构，实现了高精度的病灶检测和分类。</p>
+                    <h3>核心算法</h3>
+                    <ul>
+                        <li>ResNet改进架构</li>
+                        <li>注意力机制集成</li>
+                        <li>数据增强策略</li>
+                        <li>半监督学习</li>
+                    </ul>
+                    <h3>系统特性</h3>
+                    <ul>
+                        <li>支持DICOM标准格式</li>
+                        <li>实时标注与测量工具</li>
+                        <li>诊断报告自动生成</li>
+                        <li>模型解释性可视化</li>
+                    </ul>
+                    <h3>技术栈</h3>
+                    <p><code>PyTorch</code> <code>OpenCV</code> <code>Flask</code> <code>Vue.js</code> <code>Docker</code></p>
+                `
+            },
+            'portfolio': {
+                title: '个人作品集网站',
+                code: '#PORT-FOLIO',
+                content: `
+                    <h3>项目概述</h3>
+                    <p>使用现代前端技术构建的个人作品集网站，采用Apple风格液态玻璃设计，支持响应式布局和平滑动画效果。</p>
+                    <h3>设计特点</h3>
+                    <ul>
+                        <li>液态玻璃态设计语言</li>
+                        <li>生成式线条艺术背景</li>
+                        <li>GSAP ScrollTrigger动画</li>
+                        <li>Lenis平滑滚动</li>
+                    </ul>
+                    <h3>技术实现</h3>
+                    <ul>
+                        <li>Canvas背景动画</li>
+                        <li>CSS Backdrop Filter</li>
+                        <li>响应式网格布局</li>
+                        <li>暗色模式支持</li>
+                    </ul>
+                    <h3>技术栈</h3>
+                    <p><code>HTML5</code> <code>CSS3</code> <code>JavaScript</code> <code>GSAP</code> <code>Lenis</code></p>
+                `
+            },
+            'saas-platform': {
+                title: 'SaaS 平台开发',
+                code: '#DEV-TOOL',
+                content: `
+                    <h3>项目概述</h3>
+                    <p>全栈开发的团队协作和项目管理SaaS平台，提供任务管理、文档协作、实时通信等功能。</p>
+                    <h3>核心功能</h3>
+                    <ul>
+                        <li>看板式任务管理</li>
+                        <li>实时文档协作</li>
+                        <li>团队日历与时间线</li>
+                        <li>文件共享与版本控制</li>
+                    </ul>
+                    <h3>技术架构</h3>
+                    <ul>
+                        <li>微服务架构设计</li>
+                        <li>WebSocket实时通信</li>
+                        <li>多租户数据隔离</li>
+                        <li>弹性伸缩部署</li>
+                    </ul>
+                    <h3>技术栈</h3>
+                    <p><code>React</code> <code>Node.js</code> <code>MongoDB</code> <code>Socket.io</code> <code>AWS</code></p>
+                `
+            },
+            'knowledge-graph': {
+                title: '知识图谱可视化',
+                code: '#2023-005',
+                content: `
+                    <h3>项目概述</h3>
+                    <p>交互式知识图谱可视化工具，支持大规模数据的展示和探索，采用力导向布局算法。</p>
+                    <h3>可视化特性</h3>
+                    <ul>
+                        <li>力导向布局算法</li>
+                        <li>节点聚类与社区检测</li>
+                        <li>交互式探索工具</li>
+                        <li>路径查询与关系分析</li>
+                    </ul>
+                    <h3>性能优化</h3>
+                    <ul>
+                        <li>WebGL渲染加速</li>
+                        <li>增量加载策略</li>
+                        <li>空间索引优化</li>
+                        <li>LOD多细节层次</li>
+                    </ul>
+                    <h3>技术栈</h3>
+                    <p><code>D3.js</code> <code>WebGL</code> <code>Neo4j</code> <code>Python</code> <code>FastAPI</code></p>
+                `
+            },
+            'llm-framework': {
+                title: 'LLM 微调框架',
+                code: '#2023-003',
+                content: `
+                    <h3>项目概述</h3>
+                    <p>开源的大语言模型微调框架，简化模型适配流程，支持多种微调方法和参数高效训练。</p>
+                    <h3>支持的微调方法</h3>
+                    <ul>
+                        <li>LoRA（低秩适应）</li>
+                        <li>QLoRA（量化LoRA）</li>
+                        <li>Prefix Tuning</li>
+                        <li>全参数微调</li>
+                    </ul>
+                    <h3>框架特性</h3>
+                    <ul>
+                        <li>多模型后端支持</li>
+                        <li>分布式训练</li>
+                        <li>混合精度训练</li>
+                        <li>实验管理与追踪</li>
+                    </ul>
+                    <h3>技术栈</h3>
+                    <p><code>PyTorch</code> <code>HuggingFace</code> <code>DeepSpeed</code> <code>WandB</code></p>
+                `
+            },
+            'video-processing': {
+                title: '实时视频处理系统',
+                code: '#2022-012',
+                content: `
+                    <h3>项目概述</h3>
+                    <p>基于GPU加速的实时视频处理和分析平台，支持多种计算机视觉算法的实时运行。</p>
+                    <h3>处理能力</h3>
+                    <ul>
+                        <li>目标检测与跟踪</li>
+                        <li>行为识别</li>
+                        <li>视频超分辨率</li>
+                        <li>实时美颜与滤镜</li>
+                    </ul>
+                    <h3>性能优化</h3>
+                    <ul>
+                        <li>CUDA并行计算</li>
+                        <li>TensorRT推理优化</li>
+                        <li>多流水线处理</li>
+                        <li>零拷贝技术</li>
+                    </ul>
+                    <h3>技术栈</h3>
+                    <p><code>C++</code> <code>CUDA</code> <code>TensorRT</code> <code>OpenCV</code> <code>FFmpeg</code></p>
+                `
+            },
+            'recommendation-engine': {
+                title: '智能推荐引擎',
+                code: '#2022-008',
+                content: `
+                    <h3>项目概述</h3>
+                    <p>基于协同过滤和深度学习的个性化推荐系统，支持多种推荐场景和实时更新。</p>
+                    <h3>推荐算法</h3>
+                    <ul>
+                        <li>矩阵分解（MF）</li>
+                        <li>神经协同过滤</li>
+                        <li>深度学习模型</li>
+                        <li>多臂老虎机</li>
+                    </ul>
+                    <h3>系统特性</h3>
+                    <ul>
+                        <li>实时推荐更新</li>
+                        <li>冷启动处理</li>
+                        <li>A/B测试框架</li>
+                        <li>可解释性推荐</li>
+                    </ul>
+                    <h3>技术栈</h3>
+                    <p><code>Python</code> <code>TensorFlow</code> <code>Spark</code> <code>Kafka</code> <code>Redis</code></p>
+                `
+            }
+        };
+
+        // === Modal 功能 ===
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalCode = document.getElementById('modal-code');
+        const modalBody = document.getElementById('modal-body');
+        const modalCloseBtn = document.querySelector('.traffic-light');
+        let scrollY = 0;
+
+        function openModal(workId) {
+            const project = workProjects[workId];
+            if (!project) return;
+
+            modalTitle.textContent = project.title;
+            modalCode.textContent = project.code;
+            modalBody.innerHTML = project.content;
+            modalOverlay.classList.add('active');
+
+            // 保存当前滚动位置
+            scrollY = window.scrollY;
+
+            // 禁用背景滚动，只允许模态框滚动
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.width = '100%';
+            document.body.style.overflow = 'hidden';
+
+            // 停止 Lenis 平滑滚动
+            lenis.stop();
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+
+            // 恢复背景滚动
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            document.body.style.overflow = '';
+
+            // 恢复滚动位置
+            window.scrollTo(0, scrollY);
+
+            // 恢复 Lenis 平滑滚动
+            lenis.start();
+        }
+
+        // 点击关闭按钮
+        modalCloseBtn.addEventListener('click', closeModal);
+
+        // 点击背景关闭
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        // ESC键关闭
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // 为所有作品卡片添加点击事件
+        document.querySelectorAll('.work-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const workId = card.getAttribute('data-work');
+                openModal(workId);
+            });
+        });
+
+        // === Lenis 平滑滚动 ===
+        const lenis = new Lenis({
+            duration: 0.8,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1.5,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            prevent: (node) => node.closest('.modal-overlay') !== null,
+        });
+
+        // 与 GSAP 同步
+        lenis.on('scroll', ScrollTrigger.update);
+
+        // 添加到 GSAP ticker
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+
+        // 禁用 lag smoothing 以获得更流畅的体验
+        gsap.ticker.lagSmoothing(0);
+
+        // === 主题切换 ===
+        const toggleBtn = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            root.setAttribute('data-theme', 'dark');
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                root.setAttribute('data-theme', 'light');
+            } else {
+                root.setAttribute('data-theme', 'dark');
+            }
+        });
+
+        // === 音乐控制 ===
+        const bgMusic = document.getElementById('bg-music');
+        const musicToggle = document.getElementById('music-toggle');
+
+        function attemptAutoPlay() {
+            bgMusic.play().then(() => {
+                musicToggle.classList.add('playing');
+            }).catch(error => {
+                console.log('自动播放被阻止，需要用户交互');
+            });
+        }
+
+        window.addEventListener('load', attemptAutoPlay);
+
+        musicToggle.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicToggle.classList.add('playing');
+            } else {
+                bgMusic.pause();
+                musicToggle.classList.remove('playing');
+            }
+        });
+
+        // === GSAP 动画 ===
+        gsap.from('.page-title', {
+            y: 100,
+            opacity: 0,
+            duration: 1.2,
+            ease: 'power4.out'
+        });
+
+        gsap.from('.page-subtitle', {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
+
+        const workCards = document.querySelectorAll('.work-card');
+        workCards.forEach((card, index) => {
+            gsap.fromTo(card,
+                {
+                    opacity: 0,
+                    y: 60
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        });
+
+        // === Generative Line Art ===
+        (function() {
+            const canvas = document.getElementById('line-art-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let dpr = window.devicePixelRatio || 1;
+            let width, height;
+            let mouseX = -1000;
+            let mouseY = -1000;
+            let mouseInfluence = 0;
+
+            const lineCount = 80;
+            const lines = [];
+
+            function init() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+                ctx.scale(dpr, dpr);
+
+                lines.length = 0;
+                for (let i = 0; i < lineCount; i++) {
+                    lines.push({
+                        baseX: (width / lineCount) * i + (width / lineCount) / 2,
+                        phase: Math.random() * Math.PI * 2,
+                        speed: 0.001 + Math.random() * 0.002,
+                        amplitude: 30 + Math.random() * 50
+                    });
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                const time = Date.now();
+                const baseColor = getComputedStyle(document.body)
+                    .getPropertyValue('--accent-color').trim();
+
+                lines.forEach((line, i) => {
+                    ctx.beginPath();
+                    ctx.strokeStyle = baseColor;
+                    ctx.lineWidth = 0.5;
+                    ctx.globalAlpha = 0.3;
+
+                    for (let y = 0; y <= height; y += 5) {
+                        let waveX = Math.sin((y * 0.01) + line.phase + (time * line.speed)) * line.amplitude;
+
+                        let rippleDisplacement = 0;
+                        const dx = line.baseX + waveX - mouseX;
+                        const dy = y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const maxDistance = 200;
+
+                        if (distance < maxDistance && mouseInfluence > 0) {
+                            const influence = (1 - distance / maxDistance) * mouseInfluence;
+                            const wavePhase = distance * 0.05 - time * 0.003;
+                            const rippleWave = Math.sin(wavePhase) * 80 * influence;
+                            const radialPush = Math.sin(wavePhase * 0.5) * 40 * influence * (dx / distance);
+                            rippleDisplacement = rippleWave + radialPush;
+                        }
+
+                        const x = line.baseX + waveX + rippleDisplacement;
+
+                        if (y === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    }
+                    ctx.stroke();
+                });
+
+                mouseInfluence = Math.max(0, mouseInfluence - 0.02);
+                requestAnimationFrame(animate);
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                mouseInfluence = Math.min(1, mouseInfluence + 0.1);
+            });
+
+            window.addEventListener('resize', init);
+
+            init();
+            animate();
+        })();
+    </script>
+</body>
+</html>

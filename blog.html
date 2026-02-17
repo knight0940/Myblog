@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客 - Amorend</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-color: #F5F5DC;
+            --text-color: #1a1a2e;
+            --accent-color: #0047AB;
+            --secondary-accent: #1E90FF;
+            --white-accent: #FFFFFF;
+            --nav-bg: rgba(245, 245, 220, 0.85);
+            --nav-border: rgba(26, 26, 46, 0.1);
+            --font-sans: 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0e27;
+            --text-color: #F0F0F0;
+            --accent-color: #1E90FF;
+            --secondary-accent: #87CEEB;
+            --white-accent: #FFFFFF;
+            --nav-bg: rgba(10, 14, 39, 0.85);
+            --nav-border: rgba(240, 240, 240, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Canvas Background */
+        #line-art-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- Header --- */
+        header {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2.5rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(10, 14, 39, 0.85);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            margin-left: 2rem;
+            position: relative;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        #theme-toggle {
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        #theme-toggle:hover {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            color: var(--white-accent);
+        }
+
+        /* --- Page Header --- */
+        .page-header {
+            padding: 8rem 2rem 4rem 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title {
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg,
+                #001a33 0%,
+                #0047AB 50%,
+                #87CEEB 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        [data-theme="dark"] .page-title {
+            background: linear-gradient(135deg,
+                #F0F0F0 0%,
+                #1E90FF 50%,
+                #87CEEB 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        /* --- Blog Grid --- */
+        .blog-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        .blog-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            will-change: transform, opacity;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 12px 40px rgba(0, 71, 171, 0.25);
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .blog-meta time {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .blog-tag {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .blog-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .blog-title a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .blog-title a:hover {
+            color: var(--accent-color);
+        }
+
+        .blog-excerpt {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--text-color);
+            opacity: 0.85;
+            margin-bottom: 1.5rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .read-more:hover {
+            gap: 1rem;
+            color: var(--secondary-accent);
+        }
+
+        /* --- Modal (Liquid Glass) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 800px;
+            width: 100%;
+            height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+            transform: scale(0.9) translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 -1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 2px 4px rgba(255, 255, 255, 0.6),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.05),
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 30px 100px rgba(0, 0, 0, 0.2);
+            /* 隐藏滚动条但保持滚动功能 */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            /* 确保可以接收触摸事件 */
+            touch-action: pan-y;
+            overscroll-behavior: contain;
+        }
+
+        .modal-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 10;
+        }
+
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f57;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: rgba(0, 0, 0, 0.5);
+            font-weight: bold;
+            position: relative;
+        }
+
+        .traffic-light::after {
+            content: '×';
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .modal-close:hover .traffic-light::after {
+            opacity: 1;
+        }
+
+        .modal-close:hover .traffic-light {
+            box-shadow: 0 0 8px rgba(255, 95, 87, 0.6);
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .modal-body {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-color);
+        }
+
+        .modal-body p {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-body h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem 0;
+            color: var(--accent-color);
+        }
+
+        .modal-body h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.8rem 0;
+            color: var(--secondary-accent);
+        }
+
+        .modal-body pre {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+
+        .modal-body code {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+        }
+
+        /* --- Music Toggle --- */
+        .music-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 8px 32px rgba(0, 71, 171, 0.2),
+                0 4px 16px rgba(0, 71, 171, 0.1);
+            z-index: 1000;
+        }
+
+        .music-toggle:hover {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
+            transform: scale(1.1) translateY(-4px);
+        }
+
+        .music-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+        }
+
+        .music-toggle.playing {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow:
+                    0 8px 32px rgba(0, 71, 171, 0.2),
+                    0 4px 16px rgba(0, 71, 171, 0.1);
+            }
+            50% {
+                box-shadow:
+                    0 12px 48px rgba(0, 71, 171, 0.35),
+                    0 6px 24px rgba(0, 71, 171, 0.2);
+            }
+        }
+
+        /* --- Mobile --- */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+                margin: 0 1rem;
+                padding: 1.2rem 1.5rem;
+            }
+            .nav-links a { margin-left: 0; margin-right: 1.5rem; }
+            .blog-grid {
+                padding: 1.5rem;
+            }
+            .blog-card {
+                padding: 2rem;
+            }
+            .blog-title {
+                font-size: 1.5rem;
+            }
+            .music-toggle {
+                width: 48px;
+                height: 48px;
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+            .music-toggle svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="line-art-canvas"></canvas>
+
+    <header>
+        <div class="logo">Amorend</div>
+        <nav class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="work.html">作品</a>
+            <a href="blog.html">博客</a>
+            <a href="index.html#contact">联系</a>
+            <a id="theme-toggle">Change Contrast</a>
+        </nav>
+    </header>
+
+    <!-- 音乐控制浮动按钮 -->
+    <button id="music-toggle" class="music-toggle" title="播放/暂停音乐">
+        <svg class="music-icon" viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+    </button>
+
+    <!-- 隐藏的音频播放器 -->
+    <audio id="bg-music" loop>
+        <source src="Music/在雨后醒来.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="page-header">
+        <h1 class="page-title">BLOG</h1>
+        <p class="page-subtitle">分享我的思考与探索</p>
+    </div>
+
+    <div class="blog-grid">
+        <article class="blog-card" data-post="ai-agent-future">
+            <div class="blog-meta">
+                <time datetime="2026-01-15">2026-01-15</time>
+                <span class="blog-tag">#AI-Agent</span>
+            </div>
+            <h2 class="blog-title">
+                <a href="#" data-post="ai-agent-future">探索 AI Agent 的未来：从理论到实践</a>
+            </h2>
+            <p class="blog-excerpt">
+                深入探讨 AI Agent 的架构设计、实现细节以及在实际项目中的应用经验。
+                从单模态到多模态，从简单任务到复杂决策，AI Agent 正在改变我们与技术交互的方式...
+            </p>
+            <a href="#" class="read-more" data-post="ai-agent-future">
+                阅读全文 →
+            </a>
+        </article>
+
+        <article class="blog-card" data-post="medical-cv">
+            <div class="blog-meta">
+                <time datetime="2026-01-10">2026-01-10</time>
+                <span class="blog-tag">#Computer-Vision</span>
+            </div>
+            <h2 class="blog-title">
+                <a href="#" data-post="medical-cv">医学影像分析中的深度学习技术</a>
+            </h2>
+            <p class="blog-excerpt">
+                分享在病理图像分析项目中使用的深度学习模型和优化策略。
+                探讨如何处理高分辨率图像、设计有效的数据增强策略，以及在实际临床应用中的挑战...
+            </p>
+            <a href="#" class="read-more" data-post="medical-cv">
+                阅读全文 →
+            </a>
+        </article>
+
+        <article class="blog-card" data-post="llm-finetuning">
+            <div class="blog-meta">
+                <time datetime="2026-01-05">2026-01-05</time>
+                <span class="blog-tag">#LLM</span>
+            </div>
+            <h2 class="blog-title">
+                <a href="#" data-post="llm-finetuning">大语言模型微调实践指南</a>
+            </h2>
+            <p class="blog-excerpt">
+                从数据准备到模型部署，详细记录大语言模型微调的完整流程。
+                包括指令微调、RLHF、参数高效微调等技术要点，以及在实际项目中的最佳实践...
+            </p>
+            <a href="#" class="read-more" data-post="llm-finetuning">
+                阅读全文 →
+            </a>
+        </article>
+
+        <article class="blog-card" data-post="ai-infra">
+            <div class="blog-meta">
+                <time datetime="2025-12-28">2025-12-28</time>
+                <span class="blog-tag">#AI-Infra</span>
+            </div>
+            <h2 class="blog-title">
+                <a href="#" data-post="ai-infra">构建高效的 AI 基础设施</a>
+            </h2>
+            <p class="blog-excerpt">
+                如何设计和搭建可扩展的 AI 基础设施，支持大规模模型训练和推理。
+                从硬件选型到软件架构，从资源调度到监控系统，全方位解析 AI Infra 的设计思路...
+            </p>
+            <a href="#" class="read-more" data-post="ai-infra">
+                阅读全文 →
+            </a>
+        </article>
+
+        <article class="blog-card" data-post="vqa-research">
+            <div class="blog-meta">
+                <time datetime="2025-12-20">2025-12-20</time>
+                <span class="blog-tag">#Research</span>
+            </div>
+            <h2 class="blog-title">
+                <a href="#" data-post="vqa-research">知识增强型视觉问答系统研究</a>
+            </h2>
+            <p class="blog-excerpt">
+                探讨如何将外部知识库与视觉语言模型结合，提升 VQA 系统的性能。
+                介绍我们的研究成果，发表在 Scientific Report 上的Caption as A Bridge方法...
+            </p>
+            <a href="#" class="read-more" data-post="vqa-research">
+                阅读全文 →
+            </a>
+        </article>
+
+        <article class="blog-card" data-post="pathology-vlp">
+            <div class="blog-meta">
+                <time datetime="2025-12-15">2025-12-15</time>
+                <span class="blog-tag">#Pathology</span>
+            </div>
+            <h2 class="blog-title">
+                <a href="#" data-post="pathology-vlp">病理视觉-语言预训练的增强方法</a>
+            </h2>
+            <p class="blog-excerpt">
+                介绍我们在 BIBM 2025 发表的研究工作，提出了一种鲁棒的病理 VLP 基线。
+                通过改进训练策略和数据增强方法，显著提升了模型在医学影像分析任务中的表现...
+            </p>
+            <a href="#" class="read-more" data-post="pathology-vlp">
+                阅读全文 →
+            </a>
+        </article>
+    </div>
+
+    <!-- 底部空间，确保滚动流畅 -->
+    <div style="height: 100px;"></div>
+
+    <!-- 模态框 -->
+    <div class="modal-overlay" id="modal-overlay" data-lenis-prevent>
+        <div class="modal-content" data-lenis-prevent>
+            <div class="modal-close" id="modal-close">
+                <div class="traffic-light"></div>
+            </div>
+            <h1 class="modal-title" id="modal-title">文章标题</h1>
+            <div class="modal-meta" id="modal-meta">
+                <time>2026-01-15</time>
+                <span class="blog-tag">#AI-Agent</span>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <p>文章内容加载中...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 注册 ScrollTrigger 插件
+        gsap.registerPlugin(ScrollTrigger);
+
+        // === Lenis 平滑滚动 ===
+        const lenis = new Lenis({
+            duration: 0.8,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1.5,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            prevent: (node) => node.closest('.modal-overlay') !== null,
+        });
+
+        // 与 GSAP 同步
+        lenis.on('scroll', ScrollTrigger.update);
+
+        // 添加到 GSAP ticker
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+
+        // 禁用 lag smoothing 以获得更流畅的体验
+        gsap.ticker.lagSmoothing(0);
+
+        // === 主题切换 ===
+        const toggleBtn = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            root.setAttribute('data-theme', 'dark');
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                root.setAttribute('data-theme', 'light');
+            } else {
+                root.setAttribute('data-theme', 'dark');
+            }
+        });
+
+        // === 音乐控制 ===
+        const bgMusic = document.getElementById('bg-music');
+        const musicToggle = document.getElementById('music-toggle');
+
+        function attemptAutoPlay() {
+            bgMusic.play().then(() => {
+                musicToggle.classList.add('playing');
+            }).catch(error => {
+                console.log('自动播放被阻止，需要用户交互');
+            });
+        }
+
+        window.addEventListener('load', attemptAutoPlay);
+
+        musicToggle.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicToggle.classList.add('playing');
+            } else {
+                bgMusic.pause();
+                musicToggle.classList.remove('playing');
+            }
+        });
+
+        // === 模态框功能 ===
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalCloseBtn = document.querySelector('.traffic-light');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+
+        // 博客文章内容（示例）
+        const blogPosts = {
+            'ai-agent-future': {
+                title: '探索 AI Agent 的未来：从理论到实践',
+                date: '2026-01-15',
+                tag: '#AI-Agent',
+                content: `
+                    <p>AI Agent 正在成为人工智能领域最热门的话题之一。本文将深入探讨 AI Agent 的架构设计、实现细节以及在实际项目中的应用经验。</p>
+
+                    <h2>什么是 AI Agent？</h2>
+                    <p>AI Agent 是一种能够感知环境、做出决策并采取行动以实现目标的人工智能系统。与传统 AI 不同，Agent 具备自主性、反应性和主动性。</p>
+
+                    <h2>核心架构</h2>
+                    <p>一个典型的 AI Agent 包含以下核心组件：</p>
+                    <ul>
+                        <li>感知模块：处理多模态输入（文本、图像、音频等）</li>
+                        <li>记忆系统：短期工作记忆和长期知识存储</li>
+                        <li>规划引擎：任务分解和执行计划</li>
+                        <li>工具使用：调用外部 API 和工具</li>
+                        <li>反思机制：评估和优化决策</li>
+                    </ul>
+
+                    <h2>实践案例</h2>
+                    <p>在实际项目中，我们构建了一个基于 LLM 的研究助手 Agent，能够自主检索文献、分析数据并生成报告。以下是一些关键经验：</p>
+
+                    <h3>1. 提示词工程</h3>
+                    <p>精心设计的提示词是 Agent 成功的关键。我们采用结构化提示词，包含角色定义、任务描述、输出格式等。</p>
+
+                    <h3>2. 工具调用</h3>
+                    <p>通过 Function Calling 让 Agent 能够使用外部工具，大大扩展了其能力边界。</p>
+
+                    <h2>未来展望</h2>
+                    <p>随着多模态大模型的不断发展，AI Agent 将在更多领域发挥重要作用。从个人助手到企业应用，Agent 时代才刚刚开始。</p>
+                `
+            },
+            'medical-cv': {
+                title: '医学影像分析中的深度学习技术',
+                date: '2026-01-10',
+                tag: '#Computer-Vision',
+                content: `<p>医学影像分析是 AI 医疗应用的重要领域。本文分享我们在病理图像分析项目中的实践经验。</p>`
+            },
+            'llm-finetuning': {
+                title: '大语言模型微调实践指南',
+                date: '2026-01-05',
+                tag: '#LLM',
+                content: `<p>从数据准备到模型部署，本文详细记录大语言模型微调的完整流程。</p>`
+            },
+            'ai-infra': {
+                title: '构建高效的 AI 基础设施',
+                date: '2025-12-28',
+                tag: '#AI-Infra',
+                content: `<p>如何设计和搭建可扩展的 AI 基础设施，支持大规模模型训练和推理。</p>`
+            },
+            'vqa-research': {
+                title: '知识增强型视觉问答系统研究',
+                date: '2025-12-20',
+                tag: '#Research',
+                content: `<p>探讨如何将外部知识库与视觉语言模型结合，提升 VQA 系统的性能。</p>`
+            },
+            'pathology-vlp': {
+                title: '病理视觉-语言预训练的增强方法',
+                date: '2025-12-15',
+                tag: '#Pathology',
+                content: `<p>介绍我们在 BIBM 2025 发表的研究工作，提出了一种鲁棒的病理 VLP 基线。</p>`
+            }
+        };
+
+        // 打开模态框
+        let scrollY = 0;
+
+        function openModal(postId) {
+            const post = blogPosts[postId];
+            if (!post) return;
+
+            modalTitle.textContent = post.title;
+            document.querySelector('.modal-meta time').textContent = post.date;
+            document.querySelector('.modal-meta .blog-tag').textContent = post.tag;
+            modalBody.innerHTML = post.content;
+
+            modalOverlay.classList.add('active');
+
+            // 保存当前滚动位置
+            scrollY = window.scrollY;
+
+            // 禁用背景滚动，只允许模态框滚动
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.width = '100%';
+            document.body.style.overflow = 'hidden';
+
+            // 停止 Lenis 平滑滚动
+            lenis.stop();
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+
+            // 恢复背景滚动
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            document.body.style.overflow = '';
+
+            // 恢复滚动位置
+            window.scrollTo(0, scrollY);
+
+            // 恢复 Lenis 平滑滚动
+            lenis.start();
+        }
+
+        // 为所有博客卡片添加点击事件
+        document.querySelectorAll('[data-post]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const postId = link.getAttribute('data-post');
+                openModal(postId);
+            });
+        });
+
+        // 关闭按钮事件
+        modalCloseBtn.addEventListener('click', closeModal);
+
+        // 点击背景关闭
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        // ESC 键关闭
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // === GSAP 动画 ===
+        gsap.from('.page-title', {
+            y: 100,
+            opacity: 0,
+            duration: 1.2,
+            ease: 'power4.out'
+        });
+
+        gsap.from('.page-subtitle', {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
+
+        const blogCards = document.querySelectorAll('.blog-card');
+        blogCards.forEach((card, index) => {
+            gsap.fromTo(card,
+                {
+                    opacity: 0,
+                    y: 80
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        });
+
+        // === Generative Line Art ===
+        (function() {
+            const canvas = document.getElementById('line-art-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let dpr = window.devicePixelRatio || 1;
+            let width, height;
+            let mouseX = -1000;
+            let mouseY = -1000;
+            let mouseInfluence = 0;
+
+            const lineCount = 80;
+            const lines = [];
+
+            function init() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+                ctx.scale(dpr, dpr);
+
+                lines.length = 0;
+                for (let i = 0; i < lineCount; i++) {
+                    lines.push({
+                        baseX: (width / lineCount) * i + (width / lineCount) / 2,
+                        phase: Math.random() * Math.PI * 2,
+                        speed: 0.001 + Math.random() * 0.002,
+                        amplitude: 30 + Math.random() * 50
+                    });
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                const time = Date.now();
+                const baseColor = getComputedStyle(document.body)
+                    .getPropertyValue('--accent-color').trim();
+
+                lines.forEach((line, i) => {
+                    ctx.beginPath();
+                    ctx.strokeStyle = baseColor;
+                    ctx.lineWidth = 0.5;
+                    ctx.globalAlpha = 0.3;
+
+                    for (let y = 0; y <= height; y += 5) {
+                        let waveX = Math.sin((y * 0.01) + line.phase + (time * line.speed)) * line.amplitude;
+
+                        let rippleDisplacement = 0;
+                        const dx = line.baseX + waveX - mouseX;
+                        const dy = y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const maxDistance = 200;
+
+                        if (distance < maxDistance && mouseInfluence > 0) {
+                            const influence = (1 - distance / maxDistance) * mouseInfluence;
+                            const wavePhase = distance * 0.05 - time * 0.003;
+                            const rippleWave = Math.sin(wavePhase) * 80 * influence;
+                            const radialPush = Math.sin(wavePhase * 0.5) * 40 * influence * (dx / distance);
+                            rippleDisplacement = rippleWave + radialPush;
+                        }
+
+                        const x = line.baseX + waveX + rippleDisplacement;
+
+                        if (y === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    }
+                    ctx.stroke();
+                });
+
+                mouseInfluence = Math.max(0, mouseInfluence - 0.02);
+                requestAnimationFrame(animate);
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                mouseInfluence = Math.min(1, mouseInfluence + 0.1);
+            });
+
+            window.addEventListener('resize', init);
+
+            init();
+            animate();
+        })();
+    </script>
+</body>
+</html>
