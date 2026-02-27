@@ -1,0 +1,58 @@
+[
+  {
+    "id": "data-collection",
+    "file": "Data-Collection.md",
+    "title": "自媒体运营心得体会",
+    "date": "2026-02-27",
+    "tag": "Mindset",
+    "excerpt": "在无聊的寒假末尾机缘巧合下接触到了一个有趣的朋友，她是个互联网AI资讯博主，而我当起了她的小助理，也算半只脚踏进了自媒体行业。本文分享数据收集AI化、自媒体账号打法等运营心得。"
+  },
+  {
+    "id": "ai-agent-future",
+    "file": "ai-agent-future.md",
+    "title": "探索 AI Agent 的未来：从理论到实践",
+    "date": "2026-01-15",
+    "tag": "AI-Agent",
+    "excerpt": "AI Agent 正在成为人工智能领域最热门的话题之一。本文将深入探讨 AI Agent 的架构设计、实现细节以及在实际项目中的应用经验。"
+  },
+  {
+    "id": "medical-cv",
+    "file": "medical-cv.md",
+    "title": "医学影像分析中的深度学习技术",
+    "date": "2026-01-10",
+    "tag": "Computer-Vision",
+    "excerpt": "医学影像分析是 AI 医疗应用的重要领域。本文分享我们在病理图像分析项目中的实践经验。"
+  },
+  {
+    "id": "llm-finetuning",
+    "file": "llm-finetuning.md",
+    "title": "大语言模型微调实践指南",
+    "date": "2026-01-05",
+    "tag": "LLM",
+    "excerpt": "从数据准备到模型部署，本文详细记录大语言模型微调的完整流程。"
+  },
+  {
+    "id": "ai-infra",
+    "file": "ai-infra.md",
+    "title": "构建高效的 AI 基础设施",
+    "date": "2025-12-28",
+    "tag": "AI-Infra",
+    "excerpt": "如何设计和搭建可扩展的 AI 基础设施，支持大规模模型训练和推理。"
+  },
+  {
+    "id": "vqa-research",
+    "file": "vqa-research.md",
+    "title": "知识增强型视觉问答系统研究",
+    "date": "2025-12-20",
+    "tag": "Research",
+    "excerpt": "探讨如何将外部知识库与视觉语言模型结合，提升 VQA 系统的性能。"
+  },
+  {
+    "id": "pathology-vlp",
+    "file": "pathology-vlp.md",
+    "title": "病理视觉-语言预训练的增强方法",
+    "date": "2025-12-15",
+    "tag": "Pathology",
+    "excerpt": "介绍我们在 BIBM 2025 发表的研究工作，提出了一种鲁棒的病理 VLP 基线。"
+  }
+]

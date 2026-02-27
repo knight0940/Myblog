@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
             /* Light Theme */
@@ -535,86 +536,11 @@
         <p class="page-subtitle">探索我的项目世界</p>
     </div>
 
-    <div class="work-grid">
-        <article class="work-card" data-work="ai-agent-platform">
-            <div class="work-code">#2024-001</div>
-            <h2 class="work-name">AI Agent 研究平台</h2>
-            <p class="work-description">基于大语言模型的智能Agent系统，支持多模态交互和自主决策。</p>
-            <div class="work-tags">
-                <span class="work-tag">#AI-Agent</span>
-                <span class="work-tag">#Python</span>
-            </div>
-        </article>
-
-        <article class="work-card" data-work="medical-imaging-system">
-            <div class="work-code">#2023-008</div>
-            <h2 class="work-name">医学影像分析系统</h2>
-            <p class="work-description">深度学习驱动的病理图像分析平台，实现自动化诊断辅助。</p>
-            <div class="work-tags">
-                <span class="work-tag">#Computer-Vision</span>
-                <span class="work-tag">#Medical-AI</span>
-            </div>
-        </article>
-
-        <article class="work-card" data-work="portfolio">
-            <div class="work-code">#PORT-FOLIO</div>
-            <h2 class="work-name">个人作品集网站</h2>
-            <p class="work-description">使用现代前端技术构建的个人网站，展示项目和研究成果。</p>
-            <div class="work-tags">
-                <span class="work-tag">#Web-Dev</span>
-                <span class="work-tag">#GSAP</span>
-            </div>
-        </article>
-
-        <article class="work-card" data-work="saas-platform">
-            <div class="work-code">#DEV-TOOL</div>
-            <h2 class="work-name">SaaS 平台开发</h2>
-            <p class="work-description">全栈开发的SaaS工具，提供高效的团队协作和项目管理功能。</p>
-            <div class="work-tags">
-                <span class="work-tag">#Full-Stack</span>
-                <span class="work-tag">#React</span>
-            </div>
-        </article>
-
-        <article class="work-card" data-work="knowledge-graph">
-            <div class="work-code">#2023-005</div>
-            <h2 class="work-name">知识图谱可视化</h2>
-            <p class="work-description">交互式知识图谱可视化工具，支持大规模数据展示和探索。</p>
-            <div class="work-tags">
-                <span class="work-tag">#D3.js</span>
-                <span class="work-tag">#Data-Viz</span>
-            </div>
-        </article>
-
-        <article class="work-card" data-work="llm-framework">
-            <div class="work-code">#2023-003</div>
-            <h2 class="work-name">LLM 微调框架</h2>
-            <p class="work-description">开源的大语言模型微调框架，简化模型适配流程。</p>
-            <div class="work-tags">
-                <span class="work-tag">#LLM</span>
-                <span class="work-tag">#PyTorch</span>
-            </div>
-        </article>
-
-        <article class="work-card" data-work="video-processing">
-            <div class="work-code">#2022-012</div>
-            <h2 class="work-name">实时视频处理系统</h2>
-            <p class="work-description">基于GPU加速的实时视频处理和分析平台。</p>
-            <div class="work-tags">
-                <span class="work-tag">#CUDA</span>
-                <span class="work-tag">#CPP</span>
-            </div>
-        </article>
-
-        <article class="work-card" data-work="recommendation-engine">
-            <div class="work-code">#2022-008</div>
-            <h2 class="work-name">智能推荐引擎</h2>
-            <p class="work-description">基于协同过滤和深度学习的个性化推荐系统。</p>
-            <div class="work-tags">
-                <span class="work-tag">#ML</span>
-                <span class="work-tag">#Recommendation</span>
-            </div>
-        </article>
+    <div class="work-grid" id="work-grid">
+        <!-- 作品卡片将通过 JavaScript 动态生成 -->
+        <div class="loading-message" style="text-align: center; padding: 3rem; opacity: 0.6; grid-column: 1 / -1;">
+            <p>作品加载中...</p>
+        </div>
     </div>
 
     <!-- Modal -->
@@ -636,201 +562,181 @@
         // 注册 ScrollTrigger 插件
         gsap.registerPlugin(ScrollTrigger);
 
-        // === 作品数据 ===
-        const workProjects = {
-            'ai-agent-platform': {
-                title: 'AI Agent 研究平台',
-                code: '#2024-001',
-                content: `
-                    <h3>项目概述</h3>
-                    <p>基于大语言模型构建的智能Agent研究平台，实现了多模态交互、自主决策和任务规划能力。该平台支持插件化架构，可以灵活扩展各种功能模块。</p>
-                    <h3>核心技术</h3>
-                    <ul>
-                        <li>大语言模型集成（GPT-4, Claude等）</li>
-                        <li>向量数据库（RAG检索增强生成）</li>
-                        <li>工具调用框架（Function Calling）</li>
-                        <li>多模态输入处理（文本、图像、音频）</li>
-                    </ul>
-                    <h3>主要功能</h3>
-                    <ul>
-                        <li>自主任务分解与执行</li>
-                        <li>长短期记忆管理</li>
-                        <li>多Agent协作机制</li>
-                        <li>实时学习与适应</li>
-                    </ul>
-                    <h3>技术栈</h3>
-                    <p><code>Python</code> <code>LangChain</code> <code>FastAPI</code> <code>PostgreSQL</code> <code>Redis</code></p>
-                `
-            },
-            'medical-imaging-system': {
-                title: '医学影像分析系统',
-                code: '#2023-008',
-                content: `
-                    <h3>项目概述</h3>
-                    <p>深度学习驱动的医学影像分析平台，专注于病理图像的自动识别和诊断辅助。系统采用CNN架构，实现了高精度的病灶检测和分类。</p>
-                    <h3>核心算法</h3>
-                    <ul>
-                        <li>ResNet改进架构</li>
-                        <li>注意力机制集成</li>
-                        <li>数据增强策略</li>
-                        <li>半监督学习</li>
-                    </ul>
-                    <h3>系统特性</h3>
-                    <ul>
-                        <li>支持DICOM标准格式</li>
-                        <li>实时标注与测量工具</li>
-                        <li>诊断报告自动生成</li>
-                        <li>模型解释性可视化</li>
-                    </ul>
-                    <h3>技术栈</h3>
-                    <p><code>PyTorch</code> <code>OpenCV</code> <code>Flask</code> <code>Vue.js</code> <code>Docker</code></p>
-                `
-            },
-            'portfolio': {
-                title: '个人作品集网站',
-                code: '#PORT-FOLIO',
-                content: `
-                    <h3>项目概述</h3>
-                    <p>使用现代前端技术构建的个人作品集网站，采用Apple风格液态玻璃设计，支持响应式布局和平滑动画效果。</p>
-                    <h3>设计特点</h3>
-                    <ul>
-                        <li>液态玻璃态设计语言</li>
-                        <li>生成式线条艺术背景</li>
-                        <li>GSAP ScrollTrigger动画</li>
-                        <li>Lenis平滑滚动</li>
-                    </ul>
-                    <h3>技术实现</h3>
-                    <ul>
-                        <li>Canvas背景动画</li>
-                        <li>CSS Backdrop Filter</li>
-                        <li>响应式网格布局</li>
-                        <li>暗色模式支持</li>
-                    </ul>
-                    <h3>技术栈</h3>
-                    <p><code>HTML5</code> <code>CSS3</code> <code>JavaScript</code> <code>GSAP</code> <code>Lenis</code></p>
-                `
-            },
-            'saas-platform': {
-                title: 'SaaS 平台开发',
-                code: '#DEV-TOOL',
-                content: `
-                    <h3>项目概述</h3>
-                    <p>全栈开发的团队协作和项目管理SaaS平台，提供任务管理、文档协作、实时通信等功能。</p>
-                    <h3>核心功能</h3>
-                    <ul>
-                        <li>看板式任务管理</li>
-                        <li>实时文档协作</li>
-                        <li>团队日历与时间线</li>
-                        <li>文件共享与版本控制</li>
-                    </ul>
-                    <h3>技术架构</h3>
-                    <ul>
-                        <li>微服务架构设计</li>
-                        <li>WebSocket实时通信</li>
-                        <li>多租户数据隔离</li>
-                        <li>弹性伸缩部署</li>
-                    </ul>
-                    <h3>技术栈</h3>
-                    <p><code>React</code> <code>Node.js</code> <code>MongoDB</code> <code>Socket.io</code> <code>AWS</code></p>
-                `
-            },
-            'knowledge-graph': {
-                title: '知识图谱可视化',
-                code: '#2023-005',
-                content: `
-                    <h3>项目概述</h3>
-                    <p>交互式知识图谱可视化工具，支持大规模数据的展示和探索，采用力导向布局算法。</p>
-                    <h3>可视化特性</h3>
-                    <ul>
-                        <li>力导向布局算法</li>
-                        <li>节点聚类与社区检测</li>
-                        <li>交互式探索工具</li>
-                        <li>路径查询与关系分析</li>
-                    </ul>
-                    <h3>性能优化</h3>
-                    <ul>
-                        <li>WebGL渲染加速</li>
-                        <li>增量加载策略</li>
-                        <li>空间索引优化</li>
-                        <li>LOD多细节层次</li>
-                    </ul>
-                    <h3>技术栈</h3>
-                    <p><code>D3.js</code> <code>WebGL</code> <code>Neo4j</code> <code>Python</code> <code>FastAPI</code></p>
-                `
-            },
-            'llm-framework': {
-                title: 'LLM 微调框架',
-                code: '#2023-003',
-                content: `
-                    <h3>项目概述</h3>
-                    <p>开源的大语言模型微调框架，简化模型适配流程，支持多种微调方法和参数高效训练。</p>
-                    <h3>支持的微调方法</h3>
-                    <ul>
-                        <li>LoRA（低秩适应）</li>
-                        <li>QLoRA（量化LoRA）</li>
-                        <li>Prefix Tuning</li>
-                        <li>全参数微调</li>
-                    </ul>
-                    <h3>框架特性</h3>
-                    <ul>
-                        <li>多模型后端支持</li>
-                        <li>分布式训练</li>
-                        <li>混合精度训练</li>
-                        <li>实验管理与追踪</li>
-                    </ul>
-                    <h3>技术栈</h3>
-                    <p><code>PyTorch</code> <code>HuggingFace</code> <code>DeepSpeed</code> <code>WandB</code></p>
-                `
-            },
-            'video-processing': {
-                title: '实时视频处理系统',
-                code: '#2022-012',
-                content: `
-                    <h3>项目概述</h3>
-                    <p>基于GPU加速的实时视频处理和分析平台，支持多种计算机视觉算法的实时运行。</p>
-                    <h3>处理能力</h3>
-                    <ul>
-                        <li>目标检测与跟踪</li>
-                        <li>行为识别</li>
-                        <li>视频超分辨率</li>
-                        <li>实时美颜与滤镜</li>
-                    </ul>
-                    <h3>性能优化</h3>
-                    <ul>
-                        <li>CUDA并行计算</li>
-                        <li>TensorRT推理优化</li>
-                        <li>多流水线处理</li>
-                        <li>零拷贝技术</li>
-                    </ul>
-                    <h3>技术栈</h3>
-                    <p><code>C++</code> <code>CUDA</code> <code>TensorRT</code> <code>OpenCV</code> <code>FFmpeg</code></p>
-                `
-            },
-            'recommendation-engine': {
-                title: '智能推荐引擎',
-                code: '#2022-008',
-                content: `
-                    <h3>项目概述</h3>
-                    <p>基于协同过滤和深度学习的个性化推荐系统，支持多种推荐场景和实时更新。</p>
-                    <h3>推荐算法</h3>
-                    <ul>
-                        <li>矩阵分解（MF）</li>
-                        <li>神经协同过滤</li>
-                        <li>深度学习模型</li>
-                        <li>多臂老虎机</li>
-                    </ul>
-                    <h3>系统特性</h3>
-                    <ul>
-                        <li>实时推荐更新</li>
-                        <li>冷启动处理</li>
-                        <li>A/B测试框架</li>
-                        <li>可解释性推荐</li>
-                    </ul>
-                    <h3>技术栈</h3>
-                    <p><code>Python</code> <code>TensorFlow</code> <code>Spark</code> <code>Kafka</code> <code>Redis</code></p>
-                `
+        // 作品列表（从 index.json 动态加载）
+        let works = [];
+
+        // 缓存已加载的作品
+        const workCache = {};
+
+        // === 作品自动加载功能 ===
+
+        // 加载作品索引
+        async function loadWorkIndex() {
+            try {
+                const response = await fetch('work/index.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const index = await response.json();
+                return index;
+            } catch (error) {
+                console.error('Error loading work index:', error);
+                return [];
             }
-        };
+        }
+
+        // 生成作品卡片 HTML
+        function createWorkCardHTML(work) {
+            const tagsHTML = work.tags.map(tag => `<span class="work-tag">#${tag}</span>`).join('');
+            return `
+                <article class="work-card" data-work="${work.id}">
+                    <div class="work-code">${work.code}</div>
+                    <h2 class="work-name">${work.title}</h2>
+                    <p class="work-description">${work.description}</p>
+                    <div class="work-tags">
+                        ${tagsHTML}
+                    </div>
+                </article>
+            `;
+        }
+
+        // 渲染作品列表到页面
+        function renderWorkList(workList) {
+            const workGrid = document.getElementById('work-grid');
+
+            // 清空现有内容
+            workGrid.innerHTML = '';
+
+            // 生成并插入所有卡片
+            workList.forEach(work => {
+                workGrid.innerHTML += createWorkCardHTML(work);
+            });
+
+            // 重新绑定点击事件
+            bindWorkCardEvents();
+
+            // 重新初始化 GSAP 动画
+            initWorkCardAnimations();
+        }
+
+        // 为所有作品卡片绑定点击事件
+        function bindWorkCardEvents() {
+            document.querySelectorAll('.work-card').forEach(card => {
+                card.addEventListener('click', async () => {
+                    const workId = card.getAttribute('data-work');
+                    await openModal(workId);
+                });
+            });
+        }
+
+        // 初始化作品卡片 GSAP 动画
+        function initWorkCardAnimations() {
+            const workCards = document.querySelectorAll('.work-card');
+            workCards.forEach((card, index) => {
+                gsap.fromTo(card,
+                    {
+                        opacity: 0,
+                        y: 60
+                    },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    }
+                );
+            });
+        }
+
+        // 初始化作品页面
+        async function initWorkPage() {
+            // 加载作品索引
+            const index = await loadWorkIndex();
+
+            if (index.length === 0) {
+                console.error('No works found');
+                const workGrid = document.getElementById('work-grid');
+                workGrid.innerHTML = '<p style="text-align: center; padding: 3rem; grid-column: 1 / -1;">暂无作品</p>';
+                return;
+            }
+
+            // 渲染作品列表
+            works = index;
+            renderWorkList(works);
+
+            console.log(`Loaded ${works.length} works`);
+        }
+
+        // === 原有的模态框和解析功能 ===
+
+        // 解析 Frontmatter
+        function parseFrontmatter(markdown) {
+            const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
+            const match = markdown.match(frontmatterRegex);
+
+            if (!match) {
+                return null;
+            }
+
+            const frontmatterText = match[1];
+            const content = match[2];
+
+            const frontmatter = {};
+            frontmatterText.split('\n').forEach(line => {
+                const colonIndex = line.indexOf(':');
+                if (colonIndex !== -1) {
+                    const key = line.slice(0, colonIndex).trim();
+                    const value = line.slice(colonIndex + 1).trim();
+                    frontmatter[key] = value.replace(/^['"]|['"]$/g, '');
+                }
+            });
+
+            return {
+                ...frontmatter,
+                content: content
+            };
+        }
+
+        // 加载并解析 Markdown 文件
+        async function loadWork(workId) {
+            // 检查缓存
+            if (workCache[workId]) {
+                return workCache[workId];
+            }
+
+            // 从 works 数组中查找文件路径
+            const work = works.find(w => w.id === workId);
+            if (!work) {
+                console.error('Work not found:', workId);
+                return null;
+            }
+
+            const filePath = `work/${work.file}`;
+
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const markdown = await response.text();
+                const workData = parseFrontmatter(markdown);
+
+                if (workData) {
+                    // 使用 marked.js 将 Markdown 转换为 HTML
+                    workData.htmlContent = marked.parse(workData.content);
+                    workCache[workId] = workData;
+                    return workData;
+                }
+            } catch (error) {
+                console.error('Error loading work:', error);
+                return null;
+            }
+        }
 
         // === Modal 功能 ===
         const modalOverlay = document.getElementById('modal-overlay');
@@ -840,13 +746,11 @@
         const modalCloseBtn = document.querySelector('.traffic-light');
         let scrollY = 0;
 
-        function openModal(workId) {
-            const project = workProjects[workId];
-            if (!project) return;
-
-            modalTitle.textContent = project.title;
-            modalCode.textContent = project.code;
-            modalBody.innerHTML = project.content;
+        async function openModal(workId) {
+            // 显示加载状态
+            modalTitle.textContent = '加载中...';
+            modalCode.textContent = '';
+            modalBody.innerHTML = '<p>内容加载中...</p>';
             modalOverlay.classList.add('active');
 
             // 保存当前滚动位置
@@ -860,6 +764,20 @@
 
             // 停止 Lenis 平滑滚动
             lenis.stop();
+
+            // 加载作品
+            const work = await loadWork(workId);
+            if (!work) {
+                modalTitle.textContent = '加载失败';
+                modalCode.textContent = '';
+                modalBody.innerHTML = '<p>内容加载失败，请刷新页面重试。</p>';
+                return;
+            }
+
+            // 更新模态框内容
+            modalTitle.textContent = work.title;
+            modalCode.textContent = work.code;
+            modalBody.innerHTML = work.htmlContent;
         }
 
         function closeModal() {
@@ -893,14 +811,6 @@
             if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
                 closeModal();
             }
-        });
-
-        // 为所有作品卡片添加点击事件
-        document.querySelectorAll('.work-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const workId = card.getAttribute('data-work');
-                openModal(workId);
-            });
         });
 
         // === Lenis 平滑滚动 ===
@@ -984,25 +894,9 @@
             ease: 'power3.out'
         });
 
-        const workCards = document.querySelectorAll('.work-card');
-        workCards.forEach((card, index) => {
-            gsap.fromTo(card,
-                {
-                    opacity: 0,
-                    y: 60
-                },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.8,
-                    ease: 'power3.out',
-                    scrollTrigger: {
-                        trigger: card,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse'
-                    }
-                }
-            );
+        // === 作品页面初始化 ===
+        initWorkPage().catch(error => {
+            console.error('Failed to initialize work page:', error);
         });
 
         // === Generative Line Art ===
