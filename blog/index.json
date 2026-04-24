@@ -8,12 +8,12 @@
     "excerpt": "在无聊的寒假末尾机缘巧合下接触到了一个有趣的朋友，她是个互联网AI资讯博主，而我当起了她的小助理，也算半只脚踏进了自媒体行业。本文分享数据收集AI化、自媒体账号打法等运营心得。"
   },
   {
-    "id": "ai-agent-future",
-    "file": "ai-agent-future.md",
-    "title": "探索 AI Agent 的未来：从理论到实践",
-    "date": "2026-01-15",
+    "id": "ai-agent-paradigms",
+    "file": "ai-agent-paradigms.md",
+    "title": "几个 Agent 常见范式的思考",
+    "date": "2026-04-04",
     "tag": "AI-Agent",
-    "excerpt": "AI Agent 正在成为人工智能领域最热门的话题之一。本文将深入探讨 AI Agent 的架构设计、实现细节以及在实际项目中的应用经验。"
+    "excerpt": "AI Agent 正在成为人工智能领域最热门的话题之一。本文从 ReAct、Reflection、Plan-Solve 三种范式切入，梳理 Agent 的思考-执行模式。"
   },
   {
     "id": "medical-cv",
