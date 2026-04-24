@@ -120,8 +120,7 @@
             gap: clamp(0.8rem, 3vw, 2rem);
         }
 
-        .nav-links a,
-        .nav-action {
+        .nav-links a {
             position: relative;
             border: 0;
             background: transparent;
@@ -130,8 +129,7 @@
             transition: color 0.25s ease, opacity 0.25s ease;
         }
 
-        .nav-links a::after,
-        .nav-action::after {
+        .nav-links a::after {
             content: "";
             position: absolute;
             left: 0;
@@ -144,16 +142,66 @@
             transition: transform 0.25s ease;
         }
 
-        .nav-links a:hover,
-        .nav-action:hover {
+        .nav-links a:hover {
             color: var(--accent);
             opacity: 1;
         }
 
-        .nav-links a:hover::after,
-        .nav-action:hover::after {
+        .nav-links a:hover::after {
             transform: scaleX(1);
             transform-origin: left;
+        }
+
+        .theme-toggle {
+            position: relative;
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            background: transparent;
+            color: var(--paper);
+            cursor: pointer;
+            opacity: 0.84;
+            transition: border-color 0.25s ease, color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            opacity: 1;
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle svg {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            fill: none;
+            transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+
+        .theme-toggle .moon-icon {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .theme-toggle .sun-icon {
+            opacity: 0;
+            transform: scale(0.55) rotate(-45deg);
+        }
+
+        [data-theme="light"] .theme-toggle .moon-icon {
+            opacity: 0;
+            transform: scale(0.55) rotate(45deg);
+        }
+
+        [data-theme="light"] .theme-toggle .sun-icon {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
         }
 
         .scroll-progress {
@@ -581,7 +629,15 @@
             <a href="#chapter-social-links">社交</a>
             <a href="#chapter-inspiration-archive">灵感</a>
         </nav>
-        <button class="nav-action" id="theme-toggle" type="button">Contrast</button>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换到亮色模式" title="切换明暗模式">
+            <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 14.6A8.5 8.5 0 0 1 9.4 3a7 7 0 1 0 11.6 11.6Z"/>
+            </svg>
+            <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>
+            </svg>
+        </button>
     </header>
 
     <div class="scroll-progress" aria-hidden="true">
@@ -705,8 +761,17 @@
             root.setAttribute('data-theme', 'light');
         }
 
+        function syncThemeToggleLabel() {
+            const isLight = root.getAttribute('data-theme') === 'light';
+            elements.themeToggle.setAttribute('aria-label', isLight ? '切换到深色模式' : '切换到亮色模式');
+            elements.themeToggle.setAttribute('title', isLight ? '切换到深色模式' : '切换到亮色模式');
+        }
+
+        syncThemeToggleLabel();
+
         elements.themeToggle.addEventListener('click', () => {
             root.setAttribute('data-theme', root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+            syncThemeToggleLabel();
         });
 
         if (hasGSAP) {
